@@ -26,7 +26,10 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
 });
 
 contextBridge.exposeInMainWorld("electron", {
-  sendWebInfo: (channel: string, data: unknown) => {
-    ipcRenderer.send(channel, data);
+  sendTitleBarBTNMsg: (
+    channel: string,
+    data: "minimize" | "maximize" | "close"
+  ) => {
+    ipcRenderer.invoke(channel, data);
   },
 });

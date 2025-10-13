@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -21,6 +21,10 @@ let window: BrowserWindow | null;
 
 function createWindow() {
   window = new BrowserWindow({
+    width: 1000,
+    height: 800,
+    frame: false,
+    titleBarStyle: "hidden",
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     backgroundColor: "#0a0a0a",
     webPreferences: {
@@ -62,3 +66,49 @@ app.on("activate", () => {
 });
 
 app.whenReady().then(createWindow);
+
+ipcMain.handle(
+  "titlebar-btn-msg",
+  (_, btnName: "minimize" | "maximize" | "close") => {
+    switch (btnName) {
+      case "minimize":
+        handleMinimize();
+        break;
+      case "maximize":
+        handleMaximize();
+        break;
+      case "close":
+        handleClose();
+        break;
+    }
+  }
+);
+
+function handleMinimize() {
+  const w = BrowserWindow.getFocusedWindow();
+
+  if (!w) return;
+
+  if (!w.isMinimized()) {
+    w.minimize();
+  }
+}
+
+function handleMaximize() {
+  const w = BrowserWindow.getFocusedWindow();
+
+  if (!w) return;
+
+  if (!w.isMaximized()) {
+    w.maximize();
+  } else {
+    w.unmaximize();
+  }
+}
+
+function handleClose() {
+  const w = BrowserWindow.getFocusedWindow();
+
+  if (!w) return;
+  w.close();
+}

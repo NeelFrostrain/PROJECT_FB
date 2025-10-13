@@ -3,7 +3,10 @@ export {};
 declare global {
   interface Window {
     electron: {
-      sendWebInfo: (channel: string, data: unknown) => void;
+      sendTitleBarBTNMsg: (
+        channel: string,
+        data: "minimize" | "maximize" | "close"
+      ) => void;
     };
   }
 }
