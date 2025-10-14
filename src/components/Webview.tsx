@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef } from "react";
 import useWebStore from "../store/useWebStore";
 import LoadingScreen from "./LoadingScreen";
@@ -86,6 +87,24 @@ const Webview = () => {
       webView.removeEventListener("did-fail-load", handleFailLoad);
     };
   }, [setIsLoading, webView]);
+
+  // Set Current Page Data
+  useEffect(() => {
+    const webview = webRef.current;
+    if (!webview) return;
+
+    const handleTitle = (event: any) => {
+      const title = event.title;
+      if (!title) return;
+      window.electron.send("update-title", title);
+    };
+
+    webview.addEventListener("page-title-updated", handleTitle);
+
+    return () => {
+      webview.removeEventListener("page-title-updated", handleTitle);
+    };
+  }, []);
 
   return (
     <div className="w-[98%] h-[98%] lg:w-[99%] relative overflow-hidden">

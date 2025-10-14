@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, nativeImage, Tray } from "electron";
 import { fileURLToPath } from "node:url";
-import path from "node:path";
+import path from "path";
 
 // import { createRequire } from "node:module";
 // const require = createRequire(import.meta.url);
@@ -17,6 +17,18 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   ? path.join(process.env.APP_ROOT, "public")
   : RENDERER_DIST;
 
+const isWin = process.platform === "win32";
+const isMac = process.platform === "darwin";
+
+const windowIcon = isWin
+  ? path.join(__dirname, "../release", "Icon.ico")
+  : isMac
+  ? path.join(process.env.VITE_PUBLIC, "Icon.icns")
+  : path.join(process.env.VITE_PUBLIC, "Icon.png");
+
+// Tray icon (PNG recommended)
+const trayIcon = path.join(__dirname, "../release", "Icon.ico");
+
 let window: BrowserWindow | null;
 
 function createWindow() {
@@ -25,7 +37,7 @@ function createWindow() {
     height: 850,
     frame: false,
     titleBarStyle: "hidden",
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: windowIcon,
     backgroundColor: "#1c1c1c",
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
@@ -37,6 +49,9 @@ function createWindow() {
   });
 
   window.setMenu(null);
+  window.webContents.session.clearCache();
+  new Tray(nativeImage.createFromPath(trayIcon));
+  window.setIcon(nativeImage.createFromPath(windowIcon));
 
   window.webContents.on("did-finish-load", () => {
     window?.webContents.send(
@@ -51,6 +66,11 @@ function createWindow() {
     window.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 }
+
+// Disable GPU
+app.disableHardwareAcceleration();
+app.commandLine.appendSwitch("disable-gpu");
+app.commandLine.appendSwitch("disable-software-rasterizer");
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -67,15 +87,8 @@ app.on("activate", () => {
 
 app.whenReady().then(() => {
   createWindow();
-
-  setInterval(() => {
-    Tick();
-  }, 1000); // 1s
+  // new Tray(windowIcon);
 });
-
-function Tick() {
-  // console.log(window?.getBounds());
-}
 
 ipcMain.handle(
   "titlebar-btn-msg",
@@ -93,6 +106,12 @@ ipcMain.handle(
     }
   }
 );
+
+ipcMain.on("update-title", (_event, title: string) => {
+  if (window && title) {
+    window.setTitle(title);
+  }
+});
 
 function handleMinimize() {
   const w = BrowserWindow.getFocusedWindow();

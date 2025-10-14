@@ -6,10 +6,9 @@ interface Store {
   setIsOpen: (value: boolean) => void;
 }
 
-const useSidebarStore = create<Store>((set) => ({
-  // ─── Open State ──────────────────────────────
-  isOpen: true,
+const useSearchBoxStore = create<Store>((set) => ({
+  isOpen: false,
   setIsOpen: (value) => set(() => ({ isOpen: value })),
 }));
 
-export default useSidebarStore;
+export default useSearchBoxStore;

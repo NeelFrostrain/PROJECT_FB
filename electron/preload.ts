@@ -32,4 +32,16 @@ contextBridge.exposeInMainWorld("electron", {
   ) => {
     ipcRenderer.invoke(channel, data);
   },
+  send: (channel: string, data: unknown) => {
+    ipcRenderer.send(channel, data);
+  },
+});
+
+contextBridge.exposeInMainWorld("electronAPI", {
+  onToggleSearchbox: (
+    callback: (event: Electron.IpcRendererEvent, ...args: unknown[]) => void
+  ) => ipcRenderer.on("toggle-searchbox", callback),
+  onCloseSearchbox: (
+    callback: (event: Electron.IpcRendererEvent, ...args: unknown[]) => void
+  ) => ipcRenderer.on("close-searchbox", callback),
 });

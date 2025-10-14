@@ -1,8 +1,9 @@
 {
   "name": "project-fb",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
+  "icon": "./public/Icon.ico",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
