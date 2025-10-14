@@ -10,12 +10,12 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let window;
 function createWindow() {
   window = new BrowserWindow({
-    width: 1e3,
-    height: 800,
+    width: 1290,
+    height: 850,
     frame: false,
     titleBarStyle: "hidden",
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
-    backgroundColor: "#0a0a0a",
+    backgroundColor: "#1c1c1c",
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
       webviewTag: true,
@@ -24,6 +24,7 @@ function createWindow() {
       sandbox: true
     }
   });
+  window.setMenu(null);
   window.webContents.on("did-finish-load", () => {
     window == null ? void 0 : window.webContents.send(
       "main-process-message",
@@ -47,7 +48,11 @@ app.on("activate", () => {
     createWindow();
   }
 });
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+  setInterval(() => {
+  }, 1e3);
+});
 ipcMain.handle(
   "titlebar-btn-msg",
   (_, btnName) => {

@@ -53,7 +53,15 @@ const Webview = () => {
     if (!webView) return;
 
     const handleDidStartLoading = () => setIsLoading(true);
-    const handleDidStopLoading = () => setIsLoading(false);
+    const handleDidStopLoading = () => {
+      setIsLoading(false);
+      webView.insertCSS(`
+      ::-webkit-scrollbar {
+        width: 0px !important;
+        height: 0px !important;
+      }
+    `);
+    };
 
     webView.addEventListener("did-start-loading", handleDidStartLoading);
     webView.addEventListener("did-stop-loading", handleDidStopLoading);

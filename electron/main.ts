@@ -21,12 +21,12 @@ let window: BrowserWindow | null;
 
 function createWindow() {
   window = new BrowserWindow({
-    width: 1000,
-    height: 800,
+    width: 1290,
+    height: 850,
     frame: false,
     titleBarStyle: "hidden",
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
-    backgroundColor: "#0a0a0a",
+    backgroundColor: "#1c1c1c",
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
       webviewTag: true,
@@ -36,7 +36,7 @@ function createWindow() {
     },
   });
 
-  // window.setMenu(null);
+  window.setMenu(null);
 
   window.webContents.on("did-finish-load", () => {
     window?.webContents.send(
@@ -65,7 +65,17 @@ app.on("activate", () => {
   }
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+
+  setInterval(() => {
+    Tick();
+  }, 1000); // 1s
+});
+
+function Tick() {
+  // console.log(window?.getBounds());
+}
 
 ipcMain.handle(
   "titlebar-btn-msg",
