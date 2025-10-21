@@ -32,7 +32,7 @@ A modern, lightweight desktop web browser built with Electron, React, and TypeSc
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/NeelFrostrain/PROJECT_FB
 cd project-fb
 ```
 
