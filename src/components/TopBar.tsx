@@ -3,6 +3,7 @@ import {
   ArrowRight,
   Copy,
   CopyCheck,
+  House,
   Minus,
   PanelRightClose,
   PanelRightOpen,
@@ -12,11 +13,11 @@ import {
   X,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-
 import TopBarBTN from "./ui/TopBarBTN";
 import { cn } from "../lib/utils/cn";
 import useWebStore from "../store/useWebStore";
 import useSidebarStore from "../store/useSidebarStore";
+import appConfig from "../appConfig.json";
 
 const TopBar = () => {
   const { canGoBack, canGoForward, webActions, isLoading, currentURL } =
@@ -45,7 +46,11 @@ const TopBar = () => {
         input = `https://${input}`;
       }
     } else {
-      input = `https://duckduckgo.com/?q=${encodeURIComponent(input)}`;
+      if (appConfig.app.engine === "google") {
+        input = `https://google.com/search?q=${encodeURIComponent(input)}`;
+      } else if (appConfig.app.engine === "duckduckgo") {
+        input = `https://duckduckgo.com/?q=${encodeURIComponent(input)}`;
+      }
     }
 
     webActions.navigate(input);
@@ -148,6 +153,20 @@ const TopBar = () => {
           onClick={() => !isLoading && webActions.reload()}
         >
           <RefreshCcw size={16} strokeWidth={2} />
+        </TopBarBTN>
+
+        {/* Home */}
+        <TopBarBTN
+          className={cn("active:bg-[#0a0a0a] opacity-100 mx-3")}
+          onClick={() => {
+            if (appConfig.app.engine === "google") {
+              webActions.navigate("https://google.com");
+            } else if (appConfig.app.engine === "duckduckgo") {
+              webActions.navigate("https://duckduckgo.com");
+            }
+          }}
+        >
+          <House size={16} strokeWidth={2} />
         </TopBarBTN>
       </div>
 
